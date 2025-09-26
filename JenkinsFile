@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'master', url: 'https://github.com/maryamaslam-10p/Jmeter_RestfulTestplan.git'
+            }
+        }
+
+        stage('Prepare CSV') {
+            steps {
+                withCredentials([file(credentialsId: 'jmeter-csv-creds', variable: 'USER_CSV')]) {
+                    bat """
+                        copy "%USER_CSV%" "%WORKSPACE%\\RestfulBookingPerformance\\csv_data\\user.csv"
+                    """
+                }
+            }
+        }
+
+        stage('Run JMeter Test') {
+            steps {
+                bat """
+                    jmeter -n -t "%WORKSPACE%\\RestfulBookingPerformance\\test_plans\\Restful_testplan.jmx" ^
+                           -l "%WORKSPACE%\\RestfulBookingPerformance\\results.jtl" ^
+                           -j "%WORKSPACE%\\RestfulBookingPerformance\\jmeter.log"
+                """
+            }
+        }
+
+        stage('Publish Report') {
+            steps {
+                bat """
+                    jmeter -g "%WORKSPACE%\\RestfulBookingPerformance\\results.jtl" ^
+                           -o "%WORKSPACE%\\TestfulBookingPerformance\\html_report"
+                """
+                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true,
+                             reportDir: 'RestfulBookingPerformance/html_report',
+                             reportFiles: 'index.html',
+                             reportName: 'JMeter HTML Report'])
+            }
+        }
+    }
+}
