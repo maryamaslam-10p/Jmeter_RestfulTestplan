@@ -12,6 +12,7 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'jmeter-csv-creds', variable: 'USER_CSV')]) {
                     bat """
+                        if not exist "%WORKSPACE%\\RestfulBookingPerformance\\csv_data" mkdir "%WORKSPACE%\\RestfulBookingPerformance\\csv_data"
                         copy "%USER_CSV%" "%WORKSPACE%\\RestfulBookingPerformance\\csv_data\\users123.csv"
                     """
                 }
@@ -21,7 +22,7 @@ pipeline {
         stage('Run JMeter Test') {
             steps {
                 bat """
-                    jmeter -n -t "%WORKSPACE%\\RestfulBookingPerformance\\test_plans\\Restful_testplan.jmx" ^
+                    jmeter -n -t "%WORKSPACE%\\RestfulBookingPerformance\\test_plans\\Booking.jmx" ^
                            -l "%WORKSPACE%\\RestfulBookingPerformance\\results.jtl" ^
                            -j "%WORKSPACE%\\RestfulBookingPerformance\\jmeter.log"
                 """
@@ -32,7 +33,7 @@ pipeline {
             steps {
                 bat """
                     jmeter -g "%WORKSPACE%\\RestfulBookingPerformance\\results.jtl" ^
-                           -o "%WORKSPACE%\\TestfulBookingPerformance\\html_report"
+                           -o "%WORKSPACE%\\RestfulBookingPerformance\\html_report"
                 """
                 publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true,
                              reportDir: 'RestfulBookingPerformance/html_report',
