@@ -22,7 +22,7 @@ pipeline {
         stage('Run JMeter Test') {
             steps {
                 bat """
-                    jmeter -n -t "%WORKSPACE%\\RestfulBookingPerformance\\test_plans\\Booking.jmx" ^
+                    jmeter -n -t "%WORKSPACE%\\RestfulBookingPerformance\\test_plans\\Restful_Testplan.jmx" ^
                            -l "%WORKSPACE%\\RestfulBookingPerformance\\results.jtl" ^
                            -j "%WORKSPACE%\\RestfulBookingPerformance\\jmeter.log"
                 """
