@@ -12,7 +12,7 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: 'jmeter-csv-creds', variable: 'USER_CSV')]) {
                     bat """
-                        copy "%USER_CSV%" "%WORKSPACE%\\RestfulBookingPerformance\\csv_data\\user.csv"
+                        copy "%USER_CSV%" "%WORKSPACE%\\RestfulBookingPerformance\\csv_data\\users123.csv"
                     """
                 }
             }
