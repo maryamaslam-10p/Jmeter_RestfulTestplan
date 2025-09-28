@@ -30,16 +30,28 @@ pipeline {
         }
 
         stage('Publish Report') {
-            steps {
-                bat """
-                    jmeter -g "%WORKSPACE%\\RestfulBookingPerformance\\results.jtl" ^
-                           -o "%WORKSPACE%\\RestfulBookingPerformance\\html_report3"
-                """
-                publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true,
-                             reportDir: 'RestfulBookingPerformance/html_report3',
-                             reportFiles: 'index.html',
-                             reportName: 'JMeter HTML Report'])
-            }
+    steps {
+        script {
+            // generate timestamp, e.g. 20250926_174500
+            def timestamp = new Date().format("yyyyMMdd_HHmmss")
+
+            // define a unique report directory
+            def reportDir = "RestfulBookingPerformance/html_report_${timestamp}"
+
+            // generate HTML report
+            bat """
+                jmeter -g "%WORKSPACE%\\RestfulBookingPerformance\\results.jtl" ^
+                       -o "%WORKSPACE%\\${reportDir}"
+            """
+
+            // publish it in Jenkins
+            publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true,
+                         reportDir: reportDir,
+                         reportFiles: 'index.html',
+                         reportName: "JMeter HTML Report - ${timestamp}"])
         }
+    }
+}
+
     }
 }
