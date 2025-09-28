@@ -33,10 +33,10 @@ pipeline {
             steps {
                 bat """
                     jmeter -g "%WORKSPACE%\\RestfulBookingPerformance\\results.jtl" ^
-                           -o "%WORKSPACE%\\RestfulBookingPerformance\\html_report2"
+                           -o "%WORKSPACE%\\RestfulBookingPerformance\\html_report3"
                 """
                 publishHTML([allowMissing: false, alwaysLinkToLastBuild: true, keepAll: true,
-                             reportDir: 'RestfulBookingPerformance/html_report2',
+                             reportDir: 'RestfulBookingPerformance/html_report3',
                              reportFiles: 'index.html',
                              reportName: 'JMeter HTML Report'])
             }
